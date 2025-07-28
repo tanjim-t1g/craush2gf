@@ -266,17 +266,14 @@
     const soundToggle = document.getElementById('soundToggle');
     const enableSound = document.getElementById('enableSound');
     
-    // Audio elements
-    const heartSound = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-positive-interface-beep-221.mp3');
-    const noSound = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-quick-jump-arcade-game-239.mp3');
-    const yesSound = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-achievement-bell-600.mp3');
-    const bgMusic = new Audio('https://assets.mixkit.co/music/preview/mixkit-clear-love-745.mp3');
-    
-    // Preload audio
-    heartSound.preload = 'auto';
-    noSound.preload = 'auto';
-    yesSound.preload = 'auto';
-    bgMusic.preload = 'auto';
+    // Audio variables (will be initialized after user interaction)
+    let heartSound, noSound, yesSound, bgMusic;
+    const soundUrls = {
+      heart: 'https://assets.mixkit.co/sfx/preview/mixkit-positive-interface-beep-221.mp3',
+      no: 'https://assets.mixkit.co/sfx/preview/mixkit-quick-jump-arcade-game-239.mp3',
+      yes: 'https://assets.mixkit.co/sfx/preview/mixkit-achievement-bell-600.mp3',
+      bg: 'https://assets.mixkit.co/music/preview/mixkit-clear-love-745.mp3'
+    };
     
     // Variables
     let noBtnTapCount = 0;
@@ -305,13 +302,14 @@
       "Just say yes! 😍"
     ];
     
-    // Initialize audio
+    // Initialize audio elements after user interaction
     function initAudio() {
+      heartSound = new Audio(soundUrls.heart);
+      noSound = new Audio(soundUrls.no);
+      yesSound = new Audio(soundUrls.yes);
+      bgMusic = new Audio(soundUrls.bg);
       bgMusic.loop = true;
       bgMusic.volume = 0.3;
-      
-      // Enable sounds when user first taps
-      document.body.addEventListener('click', enableSounds, { once: true });
     }
     
     // Enable sounds
@@ -320,20 +318,28 @@
       soundToggle.textContent = "🔊";
       enableSound.style.display = 'none';
       
-      // Start background music
-      bgMusic.play().catch(e => {
+      // Initialize audio now that we have user interaction
+      initAudio();
+      
+      // Try playing background music
+      bgMusic.play().then(() => {
+        console.log("Background music started");
+      }).catch(e => {
         console.log("Background music play failed:", e);
+        soundToggle.textContent = "🔇";
+        soundsEnabled = false;
       });
     }
     
     // Play sound with error handling
-    function playSound(sound, volume = 0.5) {
+    function playSound(soundUrl, volume = 0.5) {
       if (!soundsEnabled) return;
       
       try {
-        sound.currentTime = 0;
-        sound.volume = volume;
-        sound.play().catch(e => {
+        // Create new audio instance each time for better reliability
+        const audio = new Audio(soundUrl);
+        audio.volume = volume;
+        audio.play().catch(e => {
           console.log("Audio play failed:", e);
         });
       } catch (e) {
@@ -343,7 +349,7 @@
     
     // Create floating hearts
     function createHearts(count, element = null) {
-      playSound(heartSound, 0.3);
+      playSound(soundUrls.heart, 0.3);
       
       for (let i = 0; i < count; i++) {
         const heart = document.createElement('div');
@@ -373,20 +379,29 @@
     }
     
     // Toggle sound
-    soundToggle.addEventListener('click', () => {
+    soundToggle.addEventListener('click', (e) => {
+      e.stopPropagation(); // Prevent triggering enableSounds
       soundsEnabled = !soundsEnabled;
       soundToggle.textContent = soundsEnabled ? "🔊" : "🔇";
       
       if (soundsEnabled) {
-        bgMusic.play().catch(e => console.log("Music play failed:", e));
+        if (!bgMusic) initAudio();
+        bgMusic.play().catch(e => {
+          console.log("Music play failed:", e);
+          soundToggle.textContent = "🔇";
+          soundsEnabled = false;
+        });
       } else {
-        bgMusic.pause();
+        if (bgMusic) {
+          bgMusic.pause();
+          bgMusic.currentTime = 0;
+        }
       }
     });
     
     // Yes button - redirect to Gmail
     yesBtn.addEventListener('click', () => {
-      playSound(yesSound);
+      playSound(soundUrls.yes);
       createHearts(20, yesBtn);
       setTimeout(redirectToGmail, 1500);
     });
@@ -398,7 +413,7 @@
     
     // No button - playful resistance
     noBtn.addEventListener('click', () => {
-      playSound(noSound);
+      playSound(soundUrls.no);
       noBtnTapCount++;
       
       if (noBtnTapCount < messages.length) {
@@ -421,7 +436,7 @@
         noBtn.style.background = 'linear-gradient(45deg, #4CAF50, #8BC34A)';
         noBtn.removeEventListener('click', arguments.callee);
         noBtn.addEventListener('click', () => {
-          playSound(yesSound);
+          playSound(soundUrls.yes);
           createHearts(20, noBtn);
           setTimeout(redirectToGmail, 1500);
         });
@@ -435,9 +450,11 @@
       }, 3000);
     }
     
+    // Enable sounds when user first interacts
+    document.body.addEventListener('click', enableSounds, { once: true });
+    
     // Initialize everything when page loads
     window.addEventListener('DOMContentLoaded', () => {
-      initAudio();
       createBackgroundHearts();
     });
   </script>
