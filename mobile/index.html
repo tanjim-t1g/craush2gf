@@ -189,10 +189,27 @@
       0%, 100% { transform: translateY(0); }
       50% { transform: translateY(-10px); }
     }
+
+    .sound-toggle {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: rgba(255, 255, 255, 0.3);
+      border: none;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 10;
+    }
   </style>
 </head>
 <body>
   <div id="container">
+    <button class="sound-toggle" id="soundToggle">🔊</button>
     <div class="hearts" id="hearts"></div>
     
     <h1>Do you like me? 💖</h1>
@@ -209,12 +226,26 @@
     
     <div class="hidden-message" id="hiddenMessage">
       <h2>I knew it! ❤️</h2>
-      <p>I really like you too... maybe we could go out sometime?</p>
+      <p>Let me send you an email so we can plan something special!</p>
       <button id="closeMessage">Close</button>
     </div>
     
     <div class="tap-hint">Try tapping "No" 😉</div>
   </div>
+
+  <!-- Audio elements -->
+  <audio id="heartSound" preload="auto">
+    <source src="https://assets.mixkit.co/sfx/preview/mixkit-positive-interface-beep-221.mp3" type="audio/mpeg">
+  </audio>
+  <audio id="noSound" preload="auto">
+    <source src="https://assets.mixkit.co/sfx/preview/mixkit-quick-jump-arcade-game-239.mp3" type="audio/mpeg">
+  </audio>
+  <audio id="yesSound" preload="auto">
+    <source src="https://assets.mixkit.co/sfx/preview/mixkit-achievement-bell-600.mp3" type="audio/mpeg">
+  </audio>
+  <audio id="bgMusic" loop preload="auto">
+    <source src="https://assets.mixkit.co/music/preview/mixkit-clear-love-745.mp3" type="audio/mpeg">
+  </audio>
 
   <script>
     const yesBtn = document.getElementById('yesBtn');
@@ -222,20 +253,62 @@
     const heartsContainer = document.getElementById('hearts');
     const hiddenMessage = document.getElementById('hiddenMessage');
     const closeMessage = document.getElementById('closeMessage');
+    const soundToggle = document.getElementById('soundToggle');
+    
+    // Audio elements
+    const heartSound = document.getElementById('heartSound');
+    const noSound = document.getElementById('noSound');
+    const yesSound = document.getElementById('yesSound');
+    const bgMusic = document.getElementById('bgMusic');
     
     let noBtnTapCount = 0;
+    let soundsEnabled = true;
     const messages = [
       "Are you sure? 😕",
       "Really sure? 🥺",
       "Think again! 😣",
-      "Last chance! 😭",
-      "Just say yes! 😍",
-      "I might cry... 😢",
-      "Okay fine, I'll stop! 😘"
+      "I'll be sad... 😢",
+      "Please reconsider! 😭",
+      "You're breaking my heart 💔",
+      "I might cry... 😭",
+      "Just think about it! 🤔",
+      "Is that your final answer? 😟",
+      "I'll ask one more time... 🥺",
+      "Pretty please? 🙏",
+      "I'll be really good to you! 😇",
+      "We'd be so cute together! 💑",
+      "I'd treat you like royalty 👑",
+      "I'd write you love letters 💌",
+      "I'd bring you coffee every morning ☕",
+      "I'd remember all your favorites ❤️",
+      "I'd make you laugh every day 😂",
+      "I'd hold your hand everywhere 🤝",
+      "Okay fine, I'll stop! 😘",
+      "Just say yes! 😍"
     ];
+    
+    // Toggle sound
+    soundToggle.addEventListener('click', () => {
+      soundsEnabled = !soundsEnabled;
+      soundToggle.textContent = soundsEnabled ? "🔊" : "🔇";
+      if (!soundsEnabled) {
+        bgMusic.pause();
+      } else {
+        bgMusic.play();
+      }
+    });
+    
+    // Play sound with volume control
+    function playSound(sound, volume = 0.5) {
+      if (!soundsEnabled) return;
+      sound.currentTime = 0;
+      sound.volume = volume;
+      sound.play().catch(e => console.log("Audio play failed:", e));
+    }
     
     // Create floating hearts
     function createHearts(count, element = null) {
+      playSound(heartSound, 0.3);
       for (let i = 0; i < count; i++) {
         const heart = document.createElement('div');
         heart.classList.add('heart');
@@ -252,17 +325,22 @@
         heart.style.animationDelay = `${Math.random()}s`;
         heartsContainer.appendChild(heart);
         
-        // Remove heart after animation
         setTimeout(() => {
           heart.remove();
         }, 4000);
       }
     }
     
-    // Yes button - show sweet message
+    // Redirect to Gmail compose
+    function redirectToGmail() {
+      window.location.href = "https://mail.google.com/mail/?view=cm&fs=1&to=tanjukhan2009@gmail.com&su=Accepted&body=Let's%20go%20on%20a%20date!%20%E2%9D%A4%EF%B8%8F";
+    }
+    
+    // Yes button - redirect to Gmail
     yesBtn.addEventListener('click', () => {
+      playSound(yesSound);
       createHearts(20, yesBtn);
-      hiddenMessage.classList.add('show');
+      setTimeout(redirectToGmail, 1500);
     });
     
     // Close message
@@ -272,29 +350,32 @@
     
     // No button - playful resistance
     noBtn.addEventListener('click', () => {
+      playSound(noSound);
       noBtnTapCount++;
       
       if (noBtnTapCount < messages.length) {
         noBtn.innerHTML = `<span>${messages[noBtnTapCount-1]}</span>`;
         
         // Make button smaller and harder to tap
-        noBtn.style.transform = `scale(${1 - (noBtnTapCount * 0.05)})`;
+        const scale = Math.max(0.5, 1 - (noBtnTapCount * 0.02));
+        noBtn.style.transform = `scale(${scale})`;
         
         // Move button slightly
-        const moveX = (Math.random() - 0.5) * 30;
-        const moveY = (Math.random() - 0.5) * 30;
+        const moveX = (Math.random() - 0.5) * (20 + noBtnTapCount);
+        const moveY = (Math.random() - 0.5) * (20 + noBtnTapCount);
         noBtn.style.transform += ` translate(${moveX}px, ${moveY}px)`;
         
         createHearts(3, noBtn);
       } else {
-        // After several tries, turn into a yes button
+        // After 20+ tries, turn into a yes button that redirects
         noBtn.innerHTML = '<span>Okay, Yes! ❤️</span>';
         noBtn.style.transform = 'scale(1)';
         noBtn.style.background = 'linear-gradient(45deg, #4CAF50, #8BC34A)';
         noBtn.removeEventListener('click', arguments.callee);
         noBtn.addEventListener('click', () => {
+          playSound(yesSound);
           createHearts(20, noBtn);
-          hiddenMessage.classList.add('show');
+          setTimeout(redirectToGmail, 1500);
         });
       }
     });
@@ -305,6 +386,15 @@
         createHearts(2);
       }, 3000);
     }
+    
+    // Start background music (will only play after user interaction)
+    document.body.addEventListener('click', function initAudio() {
+      if (soundsEnabled) {
+        bgMusic.volume = 0.3;
+        bgMusic.play().catch(e => console.log("Background music play failed:", e));
+      }
+      document.body.removeEventListener('click', initAudio);
+    }, { once: true });
     
     createBackgroundHearts();
   </script>
