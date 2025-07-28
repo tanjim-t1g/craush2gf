@@ -205,12 +205,35 @@
       cursor: pointer;
       z-index: 10;
     }
+
+    .enable-sound {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      font-size: 1.2rem;
+      text-align: center;
+      padding: 20px;
+      z-index: 20;
+    }
   </style>
 </head>
 <body>
   <div id="container">
-    <button class="sound-toggle" id="soundToggle">🔊</button>
+    <button class="sound-toggle" id="soundToggle">🔇</button>
     <div class="hearts" id="hearts"></div>
+    
+    <div class="enable-sound" id="enableSound">
+      <div>
+        <p>Tap anywhere to enable sounds and music ❤️</p>
+      </div>
+    </div>
     
     <h1>Do you like me? 💖</h1>
     <p>Be honest... I can handle it</p>
@@ -233,36 +256,31 @@
     <div class="tap-hint">Try tapping "No" 😉</div>
   </div>
 
-  <!-- Audio elements -->
-  <audio id="heartSound" preload="auto">
-    <source src="https://assets.mixkit.co/sfx/preview/mixkit-positive-interface-beep-221.mp3" type="audio/mpeg">
-  </audio>
-  <audio id="noSound" preload="auto">
-    <source src="https://assets.mixkit.co/sfx/preview/mixkit-quick-jump-arcade-game-239.mp3" type="audio/mpeg">
-  </audio>
-  <audio id="yesSound" preload="auto">
-    <source src="https://assets.mixkit.co/sfx/preview/mixkit-achievement-bell-600.mp3" type="audio/mpeg">
-  </audio>
-  <audio id="bgMusic" loop preload="auto">
-    <source src="https://assets.mixkit.co/music/preview/mixkit-clear-love-745.mp3" type="audio/mpeg">
-  </audio>
-
   <script>
+    // Elements
     const yesBtn = document.getElementById('yesBtn');
     const noBtn = document.getElementById('noBtn');
     const heartsContainer = document.getElementById('hearts');
     const hiddenMessage = document.getElementById('hiddenMessage');
     const closeMessage = document.getElementById('closeMessage');
     const soundToggle = document.getElementById('soundToggle');
+    const enableSound = document.getElementById('enableSound');
     
     // Audio elements
-    const heartSound = document.getElementById('heartSound');
-    const noSound = document.getElementById('noSound');
-    const yesSound = document.getElementById('yesSound');
-    const bgMusic = document.getElementById('bgMusic');
+    const heartSound = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-positive-interface-beep-221.mp3');
+    const noSound = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-quick-jump-arcade-game-239.mp3');
+    const yesSound = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-achievement-bell-600.mp3');
+    const bgMusic = new Audio('https://assets.mixkit.co/music/preview/mixkit-clear-love-745.mp3');
     
+    // Preload audio
+    heartSound.preload = 'auto';
+    noSound.preload = 'auto';
+    yesSound.preload = 'auto';
+    bgMusic.preload = 'auto';
+    
+    // Variables
     let noBtnTapCount = 0;
-    let soundsEnabled = true;
+    let soundsEnabled = false;
     const messages = [
       "Are you sure? 😕",
       "Really sure? 🥺",
@@ -287,28 +305,46 @@
       "Just say yes! 😍"
     ];
     
-    // Toggle sound
-    soundToggle.addEventListener('click', () => {
-      soundsEnabled = !soundsEnabled;
-      soundToggle.textContent = soundsEnabled ? "🔊" : "🔇";
-      if (!soundsEnabled) {
-        bgMusic.pause();
-      } else {
-        bgMusic.play();
-      }
-    });
+    // Initialize audio
+    function initAudio() {
+      bgMusic.loop = true;
+      bgMusic.volume = 0.3;
+      
+      // Enable sounds when user first taps
+      document.body.addEventListener('click', enableSounds, { once: true });
+    }
     
-    // Play sound with volume control
+    // Enable sounds
+    function enableSounds() {
+      soundsEnabled = true;
+      soundToggle.textContent = "🔊";
+      enableSound.style.display = 'none';
+      
+      // Start background music
+      bgMusic.play().catch(e => {
+        console.log("Background music play failed:", e);
+      });
+    }
+    
+    // Play sound with error handling
     function playSound(sound, volume = 0.5) {
       if (!soundsEnabled) return;
-      sound.currentTime = 0;
-      sound.volume = volume;
-      sound.play().catch(e => console.log("Audio play failed:", e));
+      
+      try {
+        sound.currentTime = 0;
+        sound.volume = volume;
+        sound.play().catch(e => {
+          console.log("Audio play failed:", e);
+        });
+      } catch (e) {
+        console.log("Audio error:", e);
+      }
     }
     
     // Create floating hearts
     function createHearts(count, element = null) {
       playSound(heartSound, 0.3);
+      
       for (let i = 0; i < count; i++) {
         const heart = document.createElement('div');
         heart.classList.add('heart');
@@ -335,6 +371,18 @@
     function redirectToGmail() {
       window.location.href = "https://mail.google.com/mail/?view=cm&fs=1&to=tanjukhan2009@gmail.com&su=Accepted&body=Let's%20go%20on%20a%20date!%20%E2%9D%A4%EF%B8%8F";
     }
+    
+    // Toggle sound
+    soundToggle.addEventListener('click', () => {
+      soundsEnabled = !soundsEnabled;
+      soundToggle.textContent = soundsEnabled ? "🔊" : "🔇";
+      
+      if (soundsEnabled) {
+        bgMusic.play().catch(e => console.log("Music play failed:", e));
+      } else {
+        bgMusic.pause();
+      }
+    });
     
     // Yes button - redirect to Gmail
     yesBtn.addEventListener('click', () => {
@@ -387,16 +435,11 @@
       }, 3000);
     }
     
-    // Start background music (will only play after user interaction)
-    document.body.addEventListener('click', function initAudio() {
-      if (soundsEnabled) {
-        bgMusic.volume = 0.3;
-        bgMusic.play().catch(e => console.log("Background music play failed:", e));
-      }
-      document.body.removeEventListener('click', initAudio);
-    }, { once: true });
-    
-    createBackgroundHearts();
+    // Initialize everything when page loads
+    window.addEventListener('DOMContentLoaded', () => {
+      initAudio();
+      createBackgroundHearts();
+    });
   </script>
 </body>
 </html>
