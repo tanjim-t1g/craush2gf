@@ -5,12 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>For Someone Special ❤️</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: 'Arial', sans-serif;
       background: linear-gradient(135deg, #ff9a9e, #fad0c4);
@@ -21,7 +16,6 @@
       align-items: center;
       touch-action: manipulation;
     }
-
     #container {
       width: 95%;
       max-width: 400px;
@@ -30,7 +24,6 @@
       backdrop-filter: blur(10px);
       border-radius: 20px;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-      overflow: hidden;
       position: relative;
       display: flex;
       flex-direction: column;
@@ -39,36 +32,14 @@
       padding: 20px;
       text-align: center;
     }
-
-    h1 {
-      font-size: 2rem;
-      color: white;
-      margin-bottom: 15px;
-      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-      animation: pulse 2s infinite;
-    }
-
+    h1 { font-size: 2rem; color: white; margin-bottom: 15px; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); animation: pulse 2s infinite; }
     @keyframes pulse {
       0% { transform: scale(1); }
       50% { transform: scale(1.05); }
       100% { transform: scale(1); }
     }
-
-    p {
-      color: white;
-      font-size: 1.1rem;
-      margin-bottom: 30px;
-      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-    }
-
-    .buttons {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-      width: 100%;
-      max-width: 300px;
-    }
-
+    p { color: white; font-size: 1.1rem; margin-bottom: 30px; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2); }
+    .buttons { display: flex; flex-direction: column; gap: 15px; width: 100%; max-width: 300px; }
     button {
       padding: 15px 30px;
       border: none;
@@ -83,28 +54,9 @@
       gap: 10px;
       box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
     }
-
-    #yesBtn {
-      background: linear-gradient(45deg, #4CAF50, #8BC34A);
-      color: white;
-    }
-
-    #noBtn {
-      background: linear-gradient(45deg, #e84393, #fd79a8);
-      color: white;
-      position: relative;
-    }
-
-    .hearts {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 1;
-    }
-
+    #yesBtn { background: linear-gradient(45deg, #4CAF50, #8BC34A); color: white; }
+    #noBtn { background: linear-gradient(45deg, #e84393, #fd79a8); color: white; position: relative; }
+    .hearts { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
     .heart {
       position: absolute;
       width: 24px;
@@ -113,24 +65,12 @@
       opacity: 0;
       animation: float 4s ease-in-out forwards;
     }
-
     @keyframes float {
-      0% {
-        transform: translateY(0) scale(0.8);
-        opacity: 0;
-      }
-      10% {
-        opacity: 1;
-      }
-      90% {
-        opacity: 0.8;
-      }
-      100% {
-        transform: translateY(-100px) rotate(15deg);
-        opacity: 0;
-      }
+      0% { transform: translateY(0) scale(0.8); opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 0.8; }
+      100% { transform: translateY(-100px) rotate(15deg); opacity: 0; }
     }
-
     .hidden-message {
       position: absolute;
       top: 0;
@@ -149,368 +89,111 @@
       padding: 20px;
       text-align: center;
     }
-
-    .hidden-message.show {
-      opacity: 1;
-      pointer-events: all;
-    }
-
-    .hidden-message h2 {
-      color: #e84393;
-      font-size: 1.8rem;
-      margin-bottom: 20px;
-    }
-
-    .hidden-message p {
-      color: #333;
-      font-size: 1.1rem;
-      margin-bottom: 30px;
-    }
-
-    #closeMessage {
-      padding: 10px 25px;
-      background: #e84393;
-      color: white;
-      border: none;
-      border-radius: 50px;
-      font-size: 1rem;
-      cursor: pointer;
-    }
-
-    .tap-hint {
-      position: absolute;
-      bottom: 20px;
-      color: white;
-      font-size: 0.9rem;
-      animation: bounce 2s infinite;
-    }
-
-    @keyframes bounce {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-10px); }
-    }
-
-    .sound-toggle {
-      position: absolute;
-      top: 15px;
-      right: 15px;
-      background: rgba(255, 255, 255, 0.3);
-      border: none;
-      border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      z-index: 10;
-    }
-
-    .enable-sound {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.5);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      color: white;
-      font-size: 1.2rem;
-      text-align: center;
-      padding: 20px;
-      z-index: 20;
-    }
+    .hidden-message.show { opacity: 1; pointer-events: all; }
+    .hidden-message h2 { color: #e84393; font-size: 1.8rem; margin-bottom: 20px; }
+    .hidden-message p { color: #333; font-size: 1.1rem; margin-bottom: 30px; }
+    #closeMessage { padding: 10px 25px; background: #e84393; color: white; border: none; border-radius: 50px; font-size: 1rem; cursor: pointer; }
+    .tap-hint { position: absolute; bottom: 20px; color: white; font-size: 0.9rem; animation: bounce 2s infinite; }
+    @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
   </style>
 </head>
 <body>
   <div id="container">
-    <button class="sound-toggle" id="soundToggle">🔇</button>
     <div class="hearts" id="hearts"></div>
-    
-    <div class="enable-sound" id="enableSound">
-      <div>
-        <p>Tap anywhere to enable sounds and music ❤️</p>
-      </div>
-    </div>
-    
     <h1>Do you like me? 💖</h1>
     <p>Be honest... I can handle it</p>
     
     <div class="buttons">
-      <button id="yesBtn">
-        <span>Yes!</span> 😊
-      </button>
-      <button id="noBtn">
-        <span>No</span> 😢
-      </button>
-    </div>
-    
-    <div class="hidden-message" id="hiddenMessage">
-      <h2>I knew it! ❤️</h2>
-      <p>Let me send you an email so we can plan something special!</p>
-      <button id="closeMessage">Close</button>
+      <button id="yesBtn"><span>Yes!</span> 😊</button>
+      <button id="noBtn"><span>No</span> 😢</button>
     </div>
     
     <div class="tap-hint">Try tapping "No" 😉</div>
   </div>
 
   <script>
-    // Elements
-    const yesBtn = document.getElementById('yesBtn');
-    const noBtn = document.getElementById('noBtn');
-    const heartsContainer = document.getElementById('hearts');
-    const hiddenMessage = document.getElementById('hiddenMessage');
-    const closeMessage = document.getElementById('closeMessage');
-    const soundToggle = document.getElementById('soundToggle');
-    const enableSound = document.getElementById('enableSound');
-    
-    // Replace the soundUrls declaration with:
-const soundUrls = {
-  heart: '../sounds/bg.mp3',
-  no: '../sounds/no.mp3',
-  yes: '../sounds/yes.mp3',
-  bg: '../sounds/bg.mp3'
-};
-
-    // Audio elements
-    let soundsEnabled = false;
-    let audioContext;
-    let bgMusic;
-    const soundBuffers = {};
-    
-    // Variables
-    let noBtnTapCount = 0;
-    const messages = [
-      "Are you sure? 😕",
-      "Really sure? 🥺",
-      "Think again! 😣",
-      "I'll be sad... 😢",
-      "Please reconsider! 😭",
-      "You're breaking my heart 💔",
-      "I might cry... 😭",
-      "Just think about it! 🤔",
-      "Is that your final answer? 😟",
-      "I'll ask one more time... 🥺",
-      "Pretty please? 🙏",
-      "I'll be really good to you! 😇",
-      "We'd be so cute together! 💑",
-      "I'd treat you like royalty 👑",
-      "I'd write you love letters 💌",
-      "I'd bring you coffee every morning ☕",
-      "I'd remember all your favorites ❤️",
-      "I'd make you laugh every day 😂",
-      "I'd hold your hand everywhere 🤝",
-      "Okay fine, I'll stop! 😘",
-      "Just say yes! 😍"
-    ];
-    
-    // Initialize Web Audio API
-    function initAudio() {
-      try {
-        audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        loadAllSounds();
-      } catch (e) {
-        console.error("Web Audio API not supported", e);
-        enableSound.querySelector('p').textContent = "Audio not supported in your browser 😢";
-        soundToggle.style.display = 'none';
-      }
-    }
-    
-    // Load all sound files
-    function loadAllSounds() {
-      Object.keys(soundUrls).forEach(key => {
-        fetch(soundUrls[key])
-          .then(response => response.arrayBuffer())
-          .then(arrayBuffer => audioContext.decodeAudioData(arrayBuffer))
-          .then(audioBuffer => {
-            soundBuffers[key] = audioBuffer;
-          })
-          .catch(e => console.error(`Error loading ${key} sound:`, e));
-      });
-    }
-    
-    // Play sound
-    function playSound(soundKey, volume = 0.5) {
-      if (!soundsEnabled || !soundBuffers[soundKey]) return;
+    // Optimized mobile-only version
+    document.addEventListener('DOMContentLoaded', () => {
+      const yesBtn = document.getElementById('yesBtn');
+      const noBtn = document.getElementById('noBtn');
+      const heartsContainer = document.getElementById('hearts');
       
-      try {
-        const source = audioContext.createBufferSource();
-        const gainNode = audioContext.createGain();
-        
-        source.buffer = soundBuffers[soundKey];
-        gainNode.gain.value = volume;
-        
-        source.connect(gainNode);
-        gainNode.connect(audioContext.destination);
-        
-        source.start(0);
-      } catch (e) {
-        console.error("Error playing sound:", e);
-      }
-    }
-    
-    // Play background music
-    function playBackgroundMusic() {
-      if (!soundsEnabled || !soundBuffers.bg) return;
-      
-      if (bgMusic) {
-        bgMusic.stop();
-      }
-      
-      bgMusic = audioContext.createBufferSource();
-      bgMusic.buffer = soundBuffers.bg;
-      bgMusic.loop = true;
-      
-      const gainNode = audioContext.createGain();
-      gainNode.gain.value = 0.3;
-      
-      bgMusic.connect(gainNode);
-      gainNode.connect(audioContext.destination);
-      
-      bgMusic.start(0);
-    }
-    
-    // Stop background music
-    function stopBackgroundMusic() {
-      if (bgMusic) {
-        bgMusic.stop();
-        bgMusic = null;
-      }
-    }
-    
-    // Enable sounds
-    function enableSounds() {
-      if (!audioContext) {
-        initAudio();
-        return;
-      }
-      
-      if (audioContext.state === 'suspended') {
-        audioContext.resume().then(() => {
-          soundsEnabled = true;
-          soundToggle.textContent = "🔊";
-          enableSound.style.display = 'none';
-          playBackgroundMusic();
-        }).catch(e => {
-          console.error("Failed to resume audio context:", e);
-          enableSound.querySelector('p').textContent = "Couldn't enable audio 😢 Please refresh and try again";
-        });
-      } else {
-        soundsEnabled = true;
-        soundToggle.textContent = "🔊";
-        enableSound.style.display = 'none';
-        playBackgroundMusic();
-      }
-    }
-    
-    // Create floating hearts
-    function createHearts(count, element = null) {
-      playSound('heart', 0.3);
-      
-      for (let i = 0; i < count; i++) {
-        const heart = document.createElement('div');
-        heart.classList.add('heart');
-        
-        if (element) {
-          const rect = element.getBoundingClientRect();
-          heart.style.left = `${rect.left + rect.width/2 - 12}px`;
-          heart.style.top = `${rect.top + rect.height/2 - 12}px`;
-        } else {
-          heart.style.left = `${Math.random() * 100}%`;
-          heart.style.bottom = '0';
+      // Heart animation
+      const createHearts = (count, element = null) => {
+        for (let i = 0; i < count; i++) {
+          const heart = document.createElement('div');
+          heart.classList.add('heart');
+          
+          if (element) {
+            const rect = element.getBoundingClientRect();
+            heart.style.left = `${rect.left + rect.width/2 - 12}px`;
+            heart.style.top = `${rect.top + rect.height/2 - 12}px`;
+          } else {
+            heart.style.left = `${Math.random() * 100}%`;
+            heart.style.bottom = '0';
+          }
+          
+          heart.style.animationDelay = `${Math.random()}s`;
+          heartsContainer.appendChild(heart);
+          
+          setTimeout(() => heart.remove(), 4000);
         }
+      };
+      
+      // Mobile Gmail redirection
+      const redirectToGmail = () => {
+        createHearts(20, yesBtn);
         
-        heart.style.animationDelay = `${Math.random()}s`;
-        heartsContainer.appendChild(heart);
+        // Try to open Gmail app (Android)
+        const gmailIntent = `intent://mail.google.com/mail/?view=cm&fs=1&to=tanjukhan2009@gmail.com&su=Accepted&body=Let's%20go%20on%20a%20date!%20❤️#Intent;scheme=https;package=com.google.android.gm;action=android.intent.action.VIEW;end`;
+        
+        // Fallback to mailto: (iOS)
+        const mailtoLink = `mailto:tanjukhan2009@gmail.com?subject=Accepted&body=Let's go on a date! ❤️`;
+        
+        // Try Android intent first
+        const iframe = document.createElement('iframe');
+        iframe.style.display = 'none';
+        iframe.src = gmailIntent;
+        document.body.appendChild(iframe);
         
         setTimeout(() => {
-          heart.remove();
-        }, 4000);
-      }
-    }
-    
-    // Redirect to Gmail compose
-    function redirectToGmail() {
-      window.location.href = "https://mail.google.com/mail/?view=cm&fs=1&to=tanjukhan2009@gmail.com&su=Accepted&body=Let's%20go%20on%20a%20date!%20%E2%9D%A4%EF%B8%8F";
-    }
-    
-    // Toggle sound
-    soundToggle.addEventListener('click', (e) => {
-      e.stopPropagation();
-      soundsEnabled = !soundsEnabled;
-      soundToggle.textContent = soundsEnabled ? "🔊" : "🔇";
+          document.body.removeChild(iframe);
+          // If still here, try mailto
+          setTimeout(() => window.location.href = mailtoLink, 300);
+        }, 100);
+      };
       
-      if (soundsEnabled) {
-        playBackgroundMusic();
-      } else {
-        stopBackgroundMusic();
-      }
-    });
-    
-    // Yes button - redirect to Gmail
-    yesBtn.addEventListener('click', () => {
-      playSound('yes');
-      createHearts(20, yesBtn);
-      setTimeout(redirectToGmail, 1500);
-    });
-    
-    // Close message
-    closeMessage.addEventListener('click', () => {
-      hiddenMessage.classList.remove('show');
-    });
-    
-    // No button - playful resistance
-    noBtn.addEventListener('click', () => {
-      playSound('no');
-      noBtnTapCount++;
+      // No button messages
+      const messages = [
+        "Are you sure? 😕", "Really sure? 🥺", "Think again! 😣", 
+        "I'll be sad... 😢", "Please reconsider! 😭", "You're breaking my heart 💔",
+        "I might cry... 😭", "Just think about it! 🤔", "Is that your final answer? 😟",
+        "I'll ask one more time... 🥺", "Pretty please? 🙏", "I'll be really good to you! 😇",
+        "We'd be so cute together! 💑", "I'd treat you like royalty 👑",
+        "Okay fine, I'll stop! 😘", "Just say yes! 😍"
+      ];
       
-      if (noBtnTapCount < messages.length) {
-        noBtn.innerHTML = `<span>${messages[noBtnTapCount-1]}</span>`;
+      let noBtnTapCount = 0;
+      
+      // Event listeners
+      yesBtn.addEventListener('click', redirectToGmail);
+      
+      noBtn.addEventListener('click', () => {
+        noBtnTapCount++;
         
-        const scale = Math.max(0.5, 1 - (noBtnTapCount * 0.02));
-        noBtn.style.transform = `scale(${scale})`;
-        
-        const moveX = (Math.random() - 0.5) * (20 + noBtnTapCount);
-        const moveY = (Math.random() - 0.5) * (20 + noBtnTapCount);
-        noBtn.style.transform += ` translate(${moveX}px, ${moveY}px)`;
-        
-        createHearts(3, noBtn);
-      } else {
-        noBtn.innerHTML = '<span>Okay, Yes! ❤️</span>';
-        noBtn.style.transform = 'scale(1)';
-        noBtn.style.background = 'linear-gradient(45deg, #4CAF50, #8BC34A)';
-        noBtn.removeEventListener('click', arguments.callee);
-        noBtn.addEventListener('click', () => {
-          playSound('yes');
-          createHearts(20, noBtn);
-          setTimeout(redirectToGmail, 1500);
-        });
-      }
-    });
-    
-    // Create some background hearts
-    function createBackgroundHearts() {
-      setInterval(() => {
-        createHearts(2);
-      }, 3000);
-    }
-    
-    // Initialize everything when page loads
-    window.addEventListener('DOMContentLoaded', () => {
-      initAudio();
-      createBackgroundHearts();
-      
-      // Enable sounds when user first interacts
-      document.body.addEventListener('click', enableSounds, { once: true });
-      
-      // Fallback in case audio never initializes
-      setTimeout(() => {
-        if (!audioContext && enableSound.style.display !== 'none') {
-          enableSound.querySelector('p').textContent = "Having trouble with audio 😢 You can still use the app without sound";
+        if (noBtnTapCount < messages.length) {
+          noBtn.innerHTML = `<span>${messages[noBtnTapCount-1]}</span>`;
+          noBtn.style.transform = `scale(${Math.max(0.5, 1 - (noBtnTapCount * 0.02))})`;
+          createHearts(3, noBtn);
+        } else {
+          noBtn.innerHTML = '<span>Okay, Yes! ❤️</span>';
+          noBtn.style.background = 'linear-gradient(45deg, #4CAF50, #8BC34A)';
+          noBtn.onclick = redirectToGmail;
         }
-      }, 5000);
+      });
+      
+      // Background hearts
+      setInterval(() => createHearts(2), 3000);
     });
   </script>
 </body>
