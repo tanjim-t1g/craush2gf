@@ -266,18 +266,22 @@
     const soundToggle = document.getElementById('soundToggle');
     const enableSound = document.getElementById('enableSound');
     
-    // Audio variables (will be initialized after user interaction)
-    let heartSound, noSound, yesSound, bgMusic;
-    const soundUrls = {
-      heart: 'https://assets.mixkit.co/sfx/preview/mixkit-positive-interface-beep-221.mp3',
-      no: 'https://assets.mixkit.co/sfx/preview/mixkit-quick-jump-arcade-game-239.mp3',
-      yes: 'https://assets.mixkit.co/sfx/preview/mixkit-achievement-bell-600.mp3',
-      bg: 'https://assets.mixkit.co/music/preview/mixkit-clear-love-745.mp3'
-    };
+    // Replace the soundUrls declaration with:
+const soundUrls = {
+  heart: '../sounds/heart.mp3',
+  no: '../sounds/no.mp3',
+  yes: '../sounds/yes.mp3',
+  bg: '../sounds/bg.mp3'
+};
+
+    // Audio elements
+    let soundsEnabled = false;
+    let audioContext;
+    let bgMusic;
+    const soundBuffers = {};
     
     // Variables
     let noBtnTapCount = 0;
-    let soundsEnabled = false;
     const messages = [
       "Are you sure? 😕",
       "Really sure? 🥺",
@@ -302,54 +306,108 @@
       "Just say yes! 😍"
     ];
     
-    // Initialize audio elements after user interaction
+    // Initialize Web Audio API
     function initAudio() {
-      heartSound = new Audio(soundUrls.heart);
-      noSound = new Audio(soundUrls.no);
-      yesSound = new Audio(soundUrls.yes);
-      bgMusic = new Audio(soundUrls.bg);
+      try {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        loadAllSounds();
+      } catch (e) {
+        console.error("Web Audio API not supported", e);
+        enableSound.querySelector('p').textContent = "Audio not supported in your browser 😢";
+        soundToggle.style.display = 'none';
+      }
+    }
+    
+    // Load all sound files
+    function loadAllSounds() {
+      Object.keys(soundUrls).forEach(key => {
+        fetch(soundUrls[key])
+          .then(response => response.arrayBuffer())
+          .then(arrayBuffer => audioContext.decodeAudioData(arrayBuffer))
+          .then(audioBuffer => {
+            soundBuffers[key] = audioBuffer;
+          })
+          .catch(e => console.error(`Error loading ${key} sound:`, e));
+      });
+    }
+    
+    // Play sound
+    function playSound(soundKey, volume = 0.5) {
+      if (!soundsEnabled || !soundBuffers[soundKey]) return;
+      
+      try {
+        const source = audioContext.createBufferSource();
+        const gainNode = audioContext.createGain();
+        
+        source.buffer = soundBuffers[soundKey];
+        gainNode.gain.value = volume;
+        
+        source.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        
+        source.start(0);
+      } catch (e) {
+        console.error("Error playing sound:", e);
+      }
+    }
+    
+    // Play background music
+    function playBackgroundMusic() {
+      if (!soundsEnabled || !soundBuffers.bg) return;
+      
+      if (bgMusic) {
+        bgMusic.stop();
+      }
+      
+      bgMusic = audioContext.createBufferSource();
+      bgMusic.buffer = soundBuffers.bg;
       bgMusic.loop = true;
-      bgMusic.volume = 0.3;
+      
+      const gainNode = audioContext.createGain();
+      gainNode.gain.value = 0.3;
+      
+      bgMusic.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+      
+      bgMusic.start(0);
+    }
+    
+    // Stop background music
+    function stopBackgroundMusic() {
+      if (bgMusic) {
+        bgMusic.stop();
+        bgMusic = null;
+      }
     }
     
     // Enable sounds
     function enableSounds() {
-      soundsEnabled = true;
-      soundToggle.textContent = "🔊";
-      enableSound.style.display = 'none';
+      if (!audioContext) {
+        initAudio();
+        return;
+      }
       
-      // Initialize audio now that we have user interaction
-      initAudio();
-      
-      // Try playing background music
-      bgMusic.play().then(() => {
-        console.log("Background music started");
-      }).catch(e => {
-        console.log("Background music play failed:", e);
-        soundToggle.textContent = "🔇";
-        soundsEnabled = false;
-      });
-    }
-    
-    // Play sound with error handling
-    function playSound(soundUrl, volume = 0.5) {
-      if (!soundsEnabled) return;
-      
-      try {
-        // Create new audio instance each time for better reliability
-        const audio = new Audio(soundUrl);
-        audio.volume = volume;
-        audio.play().catch(e => {
-          console.log("Audio play failed:", e);
+      if (audioContext.state === 'suspended') {
+        audioContext.resume().then(() => {
+          soundsEnabled = true;
+          soundToggle.textContent = "🔊";
+          enableSound.style.display = 'none';
+          playBackgroundMusic();
+        }).catch(e => {
+          console.error("Failed to resume audio context:", e);
+          enableSound.querySelector('p').textContent = "Couldn't enable audio 😢 Please refresh and try again";
         });
-      } catch (e) {
-        console.log("Audio error:", e);
+      } else {
+        soundsEnabled = true;
+        soundToggle.textContent = "🔊";
+        enableSound.style.display = 'none';
+        playBackgroundMusic();
       }
     }
     
     // Create floating hearts
     function createHearts(count, element = null) {
-      playSound(soundUrls.heart, 0.3);
+      playSound('heart', 0.3);
       
       for (let i = 0; i < count; i++) {
         const heart = document.createElement('div');
@@ -380,28 +438,20 @@
     
     // Toggle sound
     soundToggle.addEventListener('click', (e) => {
-      e.stopPropagation(); // Prevent triggering enableSounds
+      e.stopPropagation();
       soundsEnabled = !soundsEnabled;
       soundToggle.textContent = soundsEnabled ? "🔊" : "🔇";
       
       if (soundsEnabled) {
-        if (!bgMusic) initAudio();
-        bgMusic.play().catch(e => {
-          console.log("Music play failed:", e);
-          soundToggle.textContent = "🔇";
-          soundsEnabled = false;
-        });
+        playBackgroundMusic();
       } else {
-        if (bgMusic) {
-          bgMusic.pause();
-          bgMusic.currentTime = 0;
-        }
+        stopBackgroundMusic();
       }
     });
     
     // Yes button - redirect to Gmail
     yesBtn.addEventListener('click', () => {
-      playSound(soundUrls.yes);
+      playSound('yes');
       createHearts(20, yesBtn);
       setTimeout(redirectToGmail, 1500);
     });
@@ -413,30 +463,27 @@
     
     // No button - playful resistance
     noBtn.addEventListener('click', () => {
-      playSound(soundUrls.no);
+      playSound('no');
       noBtnTapCount++;
       
       if (noBtnTapCount < messages.length) {
         noBtn.innerHTML = `<span>${messages[noBtnTapCount-1]}</span>`;
         
-        // Make button smaller and harder to tap
         const scale = Math.max(0.5, 1 - (noBtnTapCount * 0.02));
         noBtn.style.transform = `scale(${scale})`;
         
-        // Move button slightly
         const moveX = (Math.random() - 0.5) * (20 + noBtnTapCount);
         const moveY = (Math.random() - 0.5) * (20 + noBtnTapCount);
         noBtn.style.transform += ` translate(${moveX}px, ${moveY}px)`;
         
         createHearts(3, noBtn);
       } else {
-        // After 20+ tries, turn into a yes button that redirects
         noBtn.innerHTML = '<span>Okay, Yes! ❤️</span>';
         noBtn.style.transform = 'scale(1)';
         noBtn.style.background = 'linear-gradient(45deg, #4CAF50, #8BC34A)';
         noBtn.removeEventListener('click', arguments.callee);
         noBtn.addEventListener('click', () => {
-          playSound(soundUrls.yes);
+          playSound('yes');
           createHearts(20, noBtn);
           setTimeout(redirectToGmail, 1500);
         });
@@ -450,12 +497,20 @@
       }, 3000);
     }
     
-    // Enable sounds when user first interacts
-    document.body.addEventListener('click', enableSounds, { once: true });
-    
     // Initialize everything when page loads
     window.addEventListener('DOMContentLoaded', () => {
+      initAudio();
       createBackgroundHearts();
+      
+      // Enable sounds when user first interacts
+      document.body.addEventListener('click', enableSounds, { once: true });
+      
+      // Fallback in case audio never initializes
+      setTimeout(() => {
+        if (!audioContext && enableSound.style.display !== 'none') {
+          enableSound.querySelector('p').textContent = "Having trouble with audio 😢 You can still use the app without sound";
+        }
+      }, 5000);
     });
   </script>
 </body>
